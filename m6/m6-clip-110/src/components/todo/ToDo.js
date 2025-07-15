@@ -21,7 +21,7 @@ const Inner = ({
           return handleToggleCompleted(todoItem.id);
         }}
       >
-        <ToDoItemText
+        <ToDoItemText className="todo-text"
           important={todoItem.important}
           todoText={todoItem.todoText}
         />
@@ -61,7 +61,7 @@ const Inner = ({
         </button>
       </div>
       {showSequenceNumberInRow && todoItem.sequence !== undefined && (
-        <span className="sequence-badge">
+        <span className="sequence-badge no-underline">
           #{todoItem.sequence}
         </span>
       )}

@@ -1,7 +1,7 @@
-/* 
+/*
 
   Description: Master stylesheet for making the app look cool 🤭
-  
+
   Author: Rakesh Mandal -- Frontend Developer
   You can hire me: https://www.upwork.com/freelancers/iamrakesh
   Say hi: contact@rakeshmandal.com
@@ -661,9 +661,11 @@ footer .progress .progress-bar {
   transform: translateX(24px);
 }
 
-.completed {
+/* Strike just the text (first child is the div that wraps ToDoItemText) */
+.single-task.completed > :first-child {
   text-decoration: line-through;
 }
+
 
 /* Sequence number badge */
 .sequence-badge {
@@ -674,12 +676,18 @@ footer .progress .progress-bar {
   font-size: 0.8em;
   color: #666;
   font-weight: bold;
+  text-decoration: none !important;
+}
+
+.no-underline {
+  text-decoration: none !important;
 }
 
 /* Dark mode for sequence badge */
 [data-theme="dark"] .sequence-badge {
   background-color: #4a4a4a;
   color: #b0b0b0;
+  text-decoration: none !important;
 }
 
 /* Utility class */
