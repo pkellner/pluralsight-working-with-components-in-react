@@ -14,6 +14,12 @@
 /* App font family */
 @import url(./poppins/poppins.css);
 
+/* Drag and drop styles */
+.dragged-over {
+  border: 2px dashed rgba(158, 15, 184, 0.5) !important;
+  background-color: rgba(158, 15, 184, 0.05) !important;
+}
+
 :root {
   /* Design system */
   --primary-rgb: 158, 15, 184; /* #9e0fb8 */
