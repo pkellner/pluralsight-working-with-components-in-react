@@ -157,6 +157,185 @@ export function useDragDrop() {
 }
 
 // ---------------------------------------------
+// DraggableToDo Component - Wrapper for ToDo items with drag functionality
+// ---------------------------------------------
+export function DraggableToDo({ todo, index, children }) {
+  const {
+    draggedItem,
+    draggedOverItem,
+    pendingReorder,
+    dropPosition,
+    handleDragStart,
+    handleDragOver,
+    handleDragEnter,
+    handleDragLeave,
+    handleDrop,
+    handleDragEnd,
+  } = useDragDrop();
+
+  const itemRef = useRef(null);
+  const [animationName, setAnimationName] = useState(null);
+  const [droppedItemAnimation, setDroppedItemAnimation] = useState(null);
+
+  useLayoutEffect(() => {
+    if (!pendingReorder || !itemRef.current) {
+      return;
+    }
+
+    const isDroppedItem = pendingReorder.droppedId === todo.id;
+    const isDropTarget = pendingReorder.dropTargetId === todo.id;
+
+    // Handle animation for the dropped item
+    if (isDroppedItem && pendingReorder.dropPosition) {
+      const element = itemRef.current;
+      const finalRect = element.getBoundingClientRect();
+
+      // Calculate where the element should animate from
+      // The drop position is where the mouse was, but we need to account for the drag offset
+      const dragOffset = pendingReorder.dragOffset || { x: 0, y: 0 };
+      const startX = pendingReorder.dropPosition.x - dragOffset.x;
+      const startY = pendingReorder.dropPosition.y - dragOffset.y;
+
+      // Calculate the translation needed to get from final position to start position
+      const deltaX = startX - finalRect.left;
+      const deltaY = startY - finalRect.top;
+
+      const uniqueAnimationName = `animate-dropped-${todo.id}-${Date.now()}`;
+
+      const keyframes = `
+        @keyframes ${uniqueAnimationName} {
+          0% {
+            transform: translate(${deltaX}px, ${deltaY}px);
+            opacity: 0.5;
+          }
+          100% {
+            transform: translate(0, 0);
+            opacity: 1;
+          }
+        }
+      `;
+
+      const styleElement = document.createElement("style");
+      styleElement.textContent = keyframes;
+      document.head.appendChild(styleElement);
+
+      setDroppedItemAnimation(uniqueAnimationName);
+
+      setTimeout(() => {
+        setDroppedItemAnimation(null);
+        document.head.removeChild(styleElement);
+      }, animationMs);
+
+      return;
+    }
+
+    // Calculate position animation for all other items that need to move
+    const previousIndex = pendingReorder.originalItems.findIndex(
+      (i) => i.id === todo.id,
+    );
+    const currentIndex = index;
+    const indexDiff = previousIndex - currentIndex;
+
+    if (indexDiff !== 0) {
+      const itemHeight = itemRef.current.offsetHeight;
+      const totalHeight = itemHeight + itemGap;
+      const translateDistance = indexDiff * totalHeight;
+
+      const uniqueAnimationName = `animate-${todo.id}-${Date.now()}`;
+
+      const keyframes = `
+        @keyframes ${uniqueAnimationName} {
+          0% {
+            transform: translateY(${translateDistance}px);
+          }
+          100% {
+            transform: translateY(0);
+          }
+        }
+      `;
+
+      const styleElement = document.createElement("style");
+      styleElement.textContent = keyframes;
+      document.head.appendChild(styleElement);
+
+      setAnimationName(uniqueAnimationName);
+
+      setTimeout(() => {
+        setAnimationName(null);
+        document.head.removeChild(styleElement);
+      }, animationMs);
+    }
+  }, [pendingReorder, todo.id, index]);
+
+  const isDragging = draggedItem?.id === todo.id;
+  const isDraggedOver = draggedOverItem?.id === todo.id;
+  const isPending = pendingReorder !== null;
+  const isDropTarget = pendingReorder?.dropTargetId === todo.id;
+  const isDroppedItem = pendingReorder?.droppedId === todo.id;
+
+  // Determine z-index during animation
+  let zIndex = 1; // default z-index
+  if (isPending) {
+    if (isDropTarget) {
+      zIndex = 0; // drop target goes behind
+    } else if (isDroppedItem) {
+      zIndex = 10; // dropped item goes on top
+    }
+  }
+
+  return (
+    <div
+      ref={itemRef}
+      draggable
+      onDragStart={(e) => handleDragStart(e, todo)}
+      onDragOver={handleDragOver}
+      onDragEnter={(e) => handleDragEnter(e, todo)}
+      onDragLeave={handleDragLeave}
+      onDrop={(e) => handleDrop(e, todo)}
+      onDragEnd={handleDragEnd}
+      style={{
+        cursor: "move",
+        position: "relative",
+        zIndex,
+        marginBottom: `${itemGap}px`,
+        ...(animationName
+          ? {
+              animation: `${animationName} ${animationMs}ms ease-out forwards`,
+            }
+          : {}),
+        ...(droppedItemAnimation
+          ? {
+              animation: `${droppedItemAnimation} ${animationMs}ms ease-out forwards`,
+            }
+          : {}),
+        opacity: isDragging ? 0.5 : 1,
+      }}
+      className={isDraggedOver ? "dragged-over" : ""}
+    >
+      {children}
+    </div>
+  );
+}
+
+// ---------------------------------------------
+// DragDropToDoList Component - Renders draggable todo items
+// ---------------------------------------------
+export function DragDropToDoList({ renderTodo }) {
+  const { pendingReorder, items } = useDragDrop();
+  const displayTodos = pendingReorder ? pendingReorder.items : items;
+
+  return (
+    <>
+      {displayTodos.map((todo, index) => (
+        <DraggableToDo key={todo.id} todo={todo} index={index}>
+          {renderTodo(todo)}
+        </DraggableToDo>
+      ))}
+    </>
+  );
+}
+
+// ---------------------------------------------
 // ListItem Component
 // ---------------------------------------------
 function ListItem({ item, index }) {
