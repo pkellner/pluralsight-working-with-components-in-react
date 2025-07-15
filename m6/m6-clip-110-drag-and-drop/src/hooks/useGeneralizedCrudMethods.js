@@ -25,7 +25,9 @@ const useGeneralizedCrudMethods = (url, errorNotificationFn) => {
     try {
       setLoadingStatus(LOADING_STATES[0]);
       const results = await axios.get(url);
-      setData(results.data);
+      // Sort todos by sequence to ensure correct order
+      const sortedData = results.data.sort((a, b) => a.sequence - b.sequence);
+      setData(sortedData);
       setLoadingStatus(LOADING_STATES[2]);
     } catch (e) {
       setError(e);
@@ -39,7 +41,9 @@ const useGeneralizedCrudMethods = (url, errorNotificationFn) => {
       try {
         setLoadingStatus(LOADING_STATES[0]);
         const results = await axios.get(url);
-        setData(results.data);
+        // Sort todos by sequence to ensure correct order
+        const sortedData = results.data.sort((a, b) => a.sequence - b.sequence);
+        setData(sortedData);
         setLoadingStatus(LOADING_STATES[2]);
       } catch (e) {
         setError(e);
@@ -60,8 +64,11 @@ const useGeneralizedCrudMethods = (url, errorNotificationFn) => {
       });
       try {
         createObject.id = Math.max(...data.map((o) => o.id), 0) + 1;
+        // Assign sequence: find the highest sequence and add 1
+        createObject.sequence = Math.max(...data.map((o) => o.sequence || 0), -1) + 1;
         setData(function (oriState) {
-          return [createObject, ...oriState];
+          // Insert at the end based on sequence
+          return [...oriState, createObject].sort((a, b) => a.sequence - b.sequence);
         });
         await axios.post(`${url}/${createObject.id}`, createObject);
         if (callbackDone) callbackDone();
@@ -82,19 +89,32 @@ const useGeneralizedCrudMethods = (url, errorNotificationFn) => {
         return { ...rec };
       });
       try {
+        let updatedRecord;
         setData(function (oriState) {
           const dataRecord = oriState.find((rec) => rec.id === id);
+          
+          // Create a new object instead of mutating the existing one
+          const newDataRecord = { ...dataRecord };
 
           // only update the fields passed in for the updateObject
           for (const [key, value] of Object.entries(updateObject)) {
-            dataRecord[key] = value === undefined ? dataRecord[key] : value;
+            newDataRecord[key] = value === undefined ? dataRecord[key] : value;
           }
-          return oriState.map((rec) => (rec.id === id ? dataRecord : rec));
+          updatedRecord = newDataRecord; // Store the updated record
+          // Sort by sequence after updating
+          return oriState.map((rec) => (rec.id === id ? newDataRecord : rec))
+            .sort((a, b) => (a.sequence || 0) - (b.sequence || 0));
         });
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        // Skip delay for sequence-only updates to prevent UI jumping
+        const isSequenceOnlyUpdate = Object.keys(updateObject).length === 2 && 
+                                     updateObject.hasOwnProperty('id') && 
+                                     updateObject.hasOwnProperty('sequence');
+        
+        if (!isSequenceOnlyUpdate) {
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+        }
 
-        // get the full record back that has been updated
-        const updatedRecord = data.find((rec) => rec.id === id);
+        // Use the stored updated record
         await axios.put(`${url}/${id}`, updatedRecord);
         // console.log(`done  call axios.put`);
         if (callbackDone) callbackDone();

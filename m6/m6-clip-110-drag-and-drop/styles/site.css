@@ -497,6 +497,12 @@ header[data-theme="dark"] h2,
   margin-right: 10px;
 }
 
+.tasks .single-task .task-actions {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 5px;
+}
+
 .tasks .single-task .task-actions .edit:hover {
   color: rgba(var(--info-rgb), 1);
 }
@@ -505,12 +511,6 @@ header[data-theme="dark"] h2,
   color: var(--danger);
 }
 
-@media (max-width: 768px) {
-  .task-actions {
-    flex-wrap: nowrap;
-    display: flex;
-  }
-}
 
 /* Dark mode */
 [data-theme="dark"] .tasks .single-task .task-actions .edit {
@@ -663,6 +663,23 @@ footer .progress .progress-bar {
 
 .completed {
   text-decoration: line-through;
+}
+
+/* Sequence number badge */
+.sequence-badge {
+  margin-left: 10px;
+  padding: 2px 8px;
+  background-color: #e0e0e0;
+  border-radius: 12px;
+  font-size: 0.8em;
+  color: #666;
+  font-weight: bold;
+}
+
+/* Dark mode for sequence badge */
+[data-theme="dark"] .sequence-badge {
+  background-color: #4a4a4a;
+  color: #b0b0b0;
 }
 
 /* Utility class */
