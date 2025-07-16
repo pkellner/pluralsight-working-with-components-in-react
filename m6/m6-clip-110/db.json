@@ -1,22 +1,22 @@
 {
   "todos": [
     {
+      "todoText": "efg",
+      "completed": false,
+      "important": false,
+      "id": 12,
+      "sequence": 11
+    },
+    {
       "id": 1,
       "todoText": "Give dog a bath",
       "completed": true,
       "important": false,
-      "sequence": 0
+      "sequence": 9
     },
     {
       "id": 2,
       "todoText": "Do laundry",
-      "completed": true,
-      "important": false,
-      "sequence": 1
-    },
-    {
-      "id": 3,
-      "todoText": "Wash clothes",
       "completed": false,
       "important": false,
       "sequence": 2
@@ -31,9 +31,9 @@
     {
       "id": 5,
       "todoText": "Take out garbage",
-      "completed": false,
+      "completed": true,
       "important": true,
-      "sequence": 4
+      "sequence": 5
     },
     {
       "id": 6,
@@ -43,18 +43,11 @@
       "sequence": 5
     },
     {
-      "id": 7,
-      "todoText": "Wash dishes",
-      "completed": false,
-      "important": false,
-      "sequence": 6
-    },
-    {
       "id": 8,
       "todoText": "Hang laundry",
       "completed": false,
       "important": true,
-      "sequence": 7
+      "sequence": 5
     },
     {
       "id": 9,
@@ -68,7 +61,7 @@
       "todoText": "Walk the dog",
       "completed": false,
       "important": true,
-      "sequence": 9
+      "sequence": 7
     }
   ]
 }

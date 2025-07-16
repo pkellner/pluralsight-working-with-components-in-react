@@ -2,7 +2,8 @@ import ToDo from "./ToDo";
 import DragDropContextProvider, {
   DragDropToDoList,
 } from "../../contexts/DragDropContextProvider";
-import { useEffect, useState } from "react";
+import { useContext } from "react";
+import { ToDosDataContext } from "../../contexts/ToDosDataContext";
 
 const ToDoList = ({
   displayStatus,
@@ -14,13 +15,10 @@ const ToDoList = ({
   handleEdit,
   idUpdating,
 }) => {
-  const [orderedList, setOrderedList] = useState(toDoList);
+  const { updateTodo } = useContext(ToDosDataContext);
 
-  useEffect(() => {
-    setOrderedList(toDoList);
-  }, [toDoList]);
-
-  const filteredList = orderedList
+  // Derive filtered list directly from props - no local state needed
+  const filteredList = toDoList
     .filter((todo) => {
       if (displayStatus === "all") {
         return true;
@@ -49,15 +47,21 @@ const ToDoList = ({
       }
     });
 
-  const handleItemsChange = (newOrderedList) => {
-    setOrderedList(newOrderedList);
+  // Handle reordering by updating todos with new sequence values
+  const handleItemsChange = (reorderedFullList) => {
+    // Update each todo with its new sequence based on position
+    reorderedFullList.forEach((todo, index) => {
+      if (todo.sequence !== index) {
+        updateTodo({ ...todo, sequence: index });
+      }
+    });
   };
 
   return (
     <div className="tasks">
       <DragDropContextProvider
         items={filteredList}
-        fullList={orderedList}
+        fullList={toDoList}
         onItemsChange={handleItemsChange}
       >
         <DragDropToDoList>
