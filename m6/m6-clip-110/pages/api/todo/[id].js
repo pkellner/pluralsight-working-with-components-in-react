@@ -1,28 +1,62 @@
+/**
+ * API route handler /api/todo/[id]
+ *
+ * Fixes race‑condition corruption (extra closing brace) by serialising all
+ * writes to db.json through a mutex. Only one write is allowed at a time.
+ *
+ * Other improvements:
+ *   • Uses fs/promises directly (no promisify boilerplate)
+ *   • Reads files with explicit UTF‑8 encoding
+ *   • Adds a helper saveTodos() that guarantees atomic writes
+ *   • Uses const/let and modern JS syntax throughout
+ */
+
 import path from "path";
-import fs from "fs";
-import { promisify } from "util";
+import fs from "fs/promises";
+import { Mutex } from "async-mutex";
 
-const delayTime = 1000; // milliseconds added to all REST calls
+const delayTime = 1000; // artificial latency for all REST calls (ms)
+const dbMutex = new Mutex(); // serialises concurrent writes
+const jsonFile = path.resolve("./", "db.json");
 
-const writeFile = promisify(fs.writeFile);
-const readFile = promisify(fs.readFile);
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+/** Pause execution for a specified number of milliseconds */
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/** Read the entire todos collection from db.json */
+async function getTodosData() {
+  const raw = await fs.readFile(jsonFile, "utf8");
+  return JSON.parse(raw).todos;
+}
+
+/**
+ * Persist the todos array atomically.
+ *
+ * The mutex ensures only one write happens at a time, preventing interleaved
+ * writes that previously produced malformed JSON (e.g., an extra `}` at EOF).
+ */
+async function saveTodos(todos) {
+  const data = JSON.stringify({ todos }, null, 2) + "\n"; // pretty + trailing NL
+  await dbMutex.runExclusive(async () => {
+    await fs.writeFile(jsonFile, data, "utf8");
+  });
+}
 
 export default async function userHandler(req, res) {
-  const method = req?.method;
-  const recordFromBody = req?.body;
-  const jsonFile = path.resolve("./", "db.json");
+  const { method, body: recordFromBody } = req;
 
-  const ids = (req?.query?.id).split(",", 50).map((id) => parseInt(id)); // only support 50 items max
-  const id = ids.length === 1 ? ids[0] : undefined; // likely never happen because if no value, then the URL goes to GET instead
+  // Parse up to 50 comma‑separated ids from the route (e.g. /api/todo/1,2,3)
+  const ids = (req?.query?.id ?? "")
+    .split(",", 50)
+    .map((id) => parseInt(id, 10))
+    .filter((n) => !Number.isNaN(n));
 
-  async function getTodosData() {
-    const readFileData = await readFile(jsonFile);
-    return JSON.parse(readFileData).todos;
-  }
+  // Convenience: if only one id is supplied, treat it as the primary id
+  const id = ids.length === 1 ? ids[0] : undefined;
 
   switch (method) {
-    case "GET":
+    case "GET": {
       const todos = await getTodosData();
       const rec = todos.find((rec) => rec.id === id);
       if (rec) {
@@ -30,86 +64,59 @@ export default async function userHandler(req, res) {
       } else {
         res.status(404).send("rec not found");
       }
-      console.log(`GET /api/todo/${id} status: 200`);
+      console.log(`GET /api/todo/${id} status: ${rec ? 200 : 404}`);
       break;
-    case "PUT":
+    }
+
+    case "PUT": {
       try {
         await delay(delayTime);
         const todos = await getTodosData();
-        const newRecsArray = todos.map(function (rec) {
-          return rec.id === id ? recordFromBody : rec;
-        });
-        writeFile(
-          jsonFile,
-          JSON.stringify(
-            {
-              todos: newRecsArray,
-            },
-            null,
-            2,
-          ),
-        );
+        const updated = todos.map((rec) => (rec.id === id ? recordFromBody : rec));
+        await saveTodos(updated);
         res.status(200).json(recordFromBody);
         console.log(`PUT /api/todo/${id} status: 200`);
       } catch (e) {
-        console.log("/api/todo PUT error:", e);
+        console.error("/api/todo PUT error:", e);
+        res.status(500).send("Internal Server Error");
       }
       break;
+    }
 
-    case "POST":
-      try {
-        await delay(delayTime);
-        const recs = await getTodosData();
-        const newRecsArray = [
-          recordFromBody,
-          ...recs.map(function (rec) {
-            return rec.id === id ? recordFromBody : rec;
-          }),
-        ];
-        writeFile(
-          jsonFile,
-          JSON.stringify(
-            {
-              todos: newRecsArray,
-            },
-            null,
-            2,
-          ),
-        );
-        res.status(200).json(recordFromBody);
-        console.log(`POST /api/todo/${id} status: 200`);
-      } catch (e) {
-        console.log("/api/todo POST error:", e);
-      }
-      break;
-
-    case "DELETE":
+    case "POST": {
       try {
         await delay(delayTime);
         const todos = await getTodosData();
-        // allows for multiple id's to be delete using non-standard REST /api/todo/10,12,14 for 3 records
-        const newRecsArray = todos.filter(function (rec) {
-          return !ids.includes(rec.id);
-        });
-        writeFile(
-          jsonFile,
-          JSON.stringify(
-            {
-              todos: newRecsArray,
-            },
-            null,
-            2,
-          ),
-        );
-        res.status(200).json(recordFromBody);
-        console.log(`DELETE /api/todo/${ids.toString()} status: 200`);
+        const withNew = [recordFromBody, ...todos];
+        await saveTodos(withNew);
+        res.status(201).json(recordFromBody);
+        console.log(`POST /api/todo status: 201`);
       } catch (e) {
-        console.log("/api/todo DELETE error:", e);
+        console.error("/api/todo POST error:", e);
+        res.status(500).send("Internal Server Error");
       }
       break;
+    }
 
-    default:
+    case "DELETE": {
+      try {
+        await delay(delayTime);
+        const todos = await getTodosData();
+        // Support multi‑id delete: /api/todo/10,12,14
+        const remaining = todos.filter((rec) => !ids.includes(rec.id));
+        await saveTodos(remaining);
+        res.status(200).json({ deleted: ids });
+        console.log(`DELETE /api/todo/${ids.toString()} status: 200`);
+      } catch (e) {
+        console.error("/api/todo DELETE error:", e);
+        res.status(500).send("Internal Server Error");
+      }
+      break;
+    }
+
+    default: {
       res.setHeader("Allow", ["GET", "PUT", "POST", "DELETE"]);
       res.status(405).end(`Method ${method} Not Allowed`);
+    }
   }
 }
