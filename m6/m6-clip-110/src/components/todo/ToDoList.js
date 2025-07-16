@@ -6,15 +6,15 @@ import { useContext, useEffect, useState } from "react";
 import { ToDosDataContext } from "../../contexts/ToDosDataContext";
 
 const ToDoList = ({
-                    displayStatus,
-                    toDoList,
-                    important,
-                    searchText,
-                    handleToggle,
-                    handleDelete,
-                    handleEdit,
-                    idUpdating,
-                  }) => {
+  displayStatus,
+  toDoList,
+  important,
+  searchText,
+  handleToggle,
+  handleDelete,
+  handleEdit,
+  idUpdating,
+}) => {
   const { updateTodo } = useContext(ToDosDataContext);
   const [orderedList, setOrderedList] = useState(toDoList);
 
