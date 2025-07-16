@@ -646,6 +646,12 @@ footer .progress .progress-bar {
 .fa-moon,
 .fa-sun {
   color: var(--warning);
+}.form-control:focus {
+  box-shadow: none;
+}
+
+.form-control {
+  background-color: var(--hard-light);
 }
 
 .theme-toggle-checkbox-label .ball {
