@@ -14,6 +14,12 @@
 /* App font family */
 @import url(./poppins/poppins.css);
 
+/* Drag and drop styles */
+.dragged-over {
+  border: 2px dashed rgba(158, 15, 184, 0.5) !important;
+  background-color: rgba(158, 15, 184, 0.05) !important;
+}
+
 :root {
   /* Design system */
   --primary-rgb: 158, 15, 184; /* #9e0fb8 */
@@ -47,13 +53,13 @@
   --nav-height: 55px;
   --form-height: 90px;
   --total-top-area: calc(
-    var(--header-height) + var(--nav-height) + var(--form-height)
+          var(--header-height) + var(--nav-height) + var(--form-height)
   );
 
   /* Shadows */
   --container-shadow: 0 5px 20px rgb(0 0 0 / 15%);
   --single-task-shadow: 0 7px 14px 0 rgba(3, 12, 51, 0.15),
-    0 3px 6px 0 rgba(0, 0, 0, 0.2);
+  0 3px 6px 0 rgba(0, 0, 0, 0.2);
   --heading-text-shadow: 0px 7px 9px rgb(53 50 67 / 33%);
 }
 
@@ -85,7 +91,7 @@
   /* Shadows */
   --container-shadow: 0 5px 20px rgb(0 0 0 / 15%);
   --single-task-shadow: 0 7px 14px 0 rgba(3, 12, 51, 0.15),
-    0 3px 6px 0 rgba(0, 0, 0, 0.2);
+  0 3px 6px 0 rgba(0, 0, 0, 0.2);
   --heading-text-shadow: 0px 7px 9px rgb(53 50 67 / 33%);
 }
 
@@ -115,8 +121,8 @@
 body,
 html {
   font-family: "Poppins", sans-serif, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
-    "Droid Sans", "Helvetica Neue", sans-serif;
+  "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
+  "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -172,9 +178,9 @@ a:focus {
 
 .btn-theme-primary {
   background: linear-gradient(
-    135deg,
-    rgba(var(--primary-rgb), 0.9) -20%,
-    rgba(var(--secondary-rgb), 0.9) 165%
+          135deg,
+          rgba(var(--primary-rgb), 0.9) -20%,
+          rgba(var(--secondary-rgb), 0.9) 165%
   );
   border: 0px;
   color: var(--smooth-light) !important ;
@@ -187,9 +193,9 @@ a:focus {
 
 .btn-theme-primary:hover {
   background: linear-gradient(
-    135deg,
-    rgba(var(--primary-rgb), 0.8) -20%,
-    rgba(var(--secondary-rgb), 0.8) 165%
+          135deg,
+          rgba(var(--primary-rgb), 0.8) -20%,
+          rgba(var(--secondary-rgb), 0.8) 165%
   );
   color: var(--subtle-light);
 }
@@ -197,18 +203,18 @@ a:focus {
 /* Dark mode */
 [data-theme="dark"] .btn-theme-primary {
   background: linear-gradient(
-    135deg,
-    rgba(var(--primary-rgb), 0.4) -20%,
-    rgba(var(--secondary-rgb), 0.5) 165%
+          135deg,
+          rgba(var(--primary-rgb), 0.4) -20%,
+          rgba(var(--secondary-rgb), 0.5) 165%
   );
   color: var(--subtle-dark);
 }
 
 [data-theme="dark"] .btn-theme-primary:hover {
   background: linear-gradient(
-    135deg,
-    rgba(var(--primary-rgb), 0.3) -20%,
-    rgba(var(--secondary-rgb), 0.4) 165%
+          135deg,
+          rgba(var(--primary-rgb), 0.3) -20%,
+          rgba(var(--secondary-rgb), 0.4) 165%
   );
   color: var(--subtle-dark);
 }
@@ -242,9 +248,9 @@ a:focus {
 
 .theme-main-gradient-bg {
   background: linear-gradient(
-    135deg,
-    rgba(var(--primary-rgb), 0.9) -20%,
-    rgba(var(--secondary-rgb), 0.9) 165%
+          135deg,
+          rgba(var(--primary-rgb), 0.9) -20%,
+          rgba(var(--secondary-rgb), 0.9) 165%
   );
 }
 
@@ -291,11 +297,11 @@ a:focus {
 /* Header */
 header {
   background: linear-gradient(
-      135deg,
-      rgba(var(--primary-rgb), 0.7) -10%,
-      rgba(var(--secondary-rgb), 0.8) 180%
-    ),
-    url(images/header-bg.jpeg);
+          135deg,
+          rgba(var(--primary-rgb), 0.7) -10%,
+          rgba(var(--secondary-rgb), 0.8) 180%
+  ),
+  url(images/header-bg.jpeg);
   background-size: auto;
   background-position: bottom center;
   background-repeat: repeat-x;
@@ -312,9 +318,9 @@ header {
 header[data-theme="dark"],
 [data-theme="dark"] header {
   background: linear-gradient(
-    135deg,
-    rgba(var(--primary-rgb), 0.4) -20%,
-    rgba(var(--secondary-rgb), 0.5) 165%
+          135deg,
+          rgba(var(--primary-rgb), 0.4) -20%,
+          rgba(var(--secondary-rgb), 0.5) 165%
   );
 }
 
@@ -661,11 +667,9 @@ footer .progress .progress-bar {
   transform: translateX(24px);
 }
 
-/* Strike just the text (first child is the div that wraps ToDoItemText) */
-.single-task.completed > :first-child {
+.completed {
   text-decoration: line-through;
 }
-
 
 /* Sequence number badge */
 .sequence-badge {
@@ -676,18 +680,12 @@ footer .progress .progress-bar {
   font-size: 0.8em;
   color: #666;
   font-weight: bold;
-  text-decoration: none !important;
-}
-
-.no-underline {
-  text-decoration: none !important;
 }
 
 /* Dark mode for sequence badge */
 [data-theme="dark"] .sequence-badge {
   background-color: #4a4a4a;
   color: #b0b0b0;
-  text-decoration: none !important;
 }
 
 /* Utility class */
