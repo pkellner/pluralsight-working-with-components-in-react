@@ -2,8 +2,6 @@ import ErrorBoundary from "../common/ErrorBoundary";
 import ToDoItemText from "./ToDoItemText";
 import { memo } from "react";
 
-const showSequenceNumberInRow = true;
-
 const Inner = ({
   todoItem,
   handleToggleCompleted,
@@ -61,7 +59,7 @@ const Inner = ({
           <i className="far fa-trash-alt"></i>
         </button>
       </div>
-      {showSequenceNumberInRow && todoItem.sequence !== undefined && (
+      {todoItem.sequence !== undefined && (
         <span className="sequence-badge no-underline">
           #{todoItem.sequence}
         </span>
