@@ -667,11 +667,9 @@ footer .progress .progress-bar {
   transform: translateX(24px);
 }
 
-/* Strike just the text (first child is the div that wraps ToDoItemText) */
-.single-task.completed > :first-child {
+.completed {
   text-decoration: line-through;
 }
-
 
 /* Sequence number badge */
 .sequence-badge {
@@ -682,10 +680,6 @@ footer .progress .progress-bar {
   font-size: 0.8em;
   color: #666;
   font-weight: bold;
-}
-
-.no-underline {
-  text-decoration: none !important;
 }
 
 /* Dark mode for sequence badge */

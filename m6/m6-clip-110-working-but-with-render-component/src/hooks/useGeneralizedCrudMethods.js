@@ -66,7 +66,7 @@ const useGeneralizedCrudMethods = (url, errorNotificationFn) => {
         createObject.id = Math.max(...data.map((o) => o.id), 0) + 1;
         // Assign sequence: find the highest sequence and add 1
         createObject.sequence =
-          Math.max(...data.map((o) => o.sequence || 0), -1) + 1;
+          Math.max(...data.map((o) => o.sequence || 0), 0) + 1;
         setData(function (oriState) {
           // Insert at the end based on sequence
           return [...oriState, createObject].sort(

@@ -24,7 +24,6 @@ export default function DragDropContextProvider({
   children,
   items,
   onItemsChange,
-  fullList = null,
 }) {
   const [draggedItem, setDraggedItem] = useState(null);
   const [draggedOverItem, setDraggedOverItem] = useState(null);
@@ -81,35 +80,6 @@ export default function DragDropContextProvider({
     const [removed] = newItems.splice(draggedIndex, 1);
     newItems.splice(dropIndex, 0, removed);
 
-    // If we have a fullList, update the order in it
-    let updatedFullList = null;
-    if (fullList && onItemsChange) {
-      // Create a map of the new order from filtered items
-      const orderMap = new Map();
-      newItems.forEach((item, index) => {
-        orderMap.set(item.id, index);
-      });
-
-      // Sort the full list based on the new order of filtered items
-      updatedFullList = [...fullList];
-      updatedFullList.sort((a, b) => {
-        const aIndex = orderMap.get(a.id);
-        const bIndex = orderMap.get(b.id);
-
-        // If both items are in the reordered list, use their new order
-        if (aIndex !== undefined && bIndex !== undefined) {
-          return aIndex - bIndex;
-        }
-
-        // If only one item is in the reordered list, keep relative positions
-        if (aIndex !== undefined) return -1;
-        if (bIndex !== undefined) return 1;
-
-        // If neither item is in the reordered list, maintain original order
-        return fullList.indexOf(a) - fullList.indexOf(b);
-      });
-    }
-
     // Set pending reorder with original items and drop target ID for reference
     setPendingReorder({
       items: newItems,
@@ -122,7 +92,7 @@ export default function DragDropContextProvider({
 
     // Execute reorder after the unified animation duration
     setTimeout(() => {
-      onItemsChange(updatedFullList || newItems);
+      onItemsChange(newItems);
       setPendingReorder(null);
       setDropPosition(null);
       setDragOffset(null);
@@ -353,7 +323,7 @@ export function DraggableToDo({ todo, index, children }) {
 // ---------------------------------------------
 // DragDropToDoList Component - Renders draggable todo items
 // ---------------------------------------------
-export function DragDropToDoList({ children }) {
+export function DragDropToDoList({ renderTodo }) {
   const { pendingReorder, items } = useDragDrop();
   const displayTodos = pendingReorder ? pendingReorder.items : items;
 
@@ -361,11 +331,7 @@ export function DragDropToDoList({ children }) {
     <>
       {displayTodos.map((todo, index) => (
         <DraggableToDo key={todo.id} todo={todo} index={index}>
-          {React.Children.map(children, (child) =>
-            React.cloneElement(child, {
-              todoItem: { ...todo, sequence: index + 1 },
-            }),
-          )}
+          {renderTodo(todo)}
         </DraggableToDo>
       ))}
     </>

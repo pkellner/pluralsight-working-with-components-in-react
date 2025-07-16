@@ -21,7 +21,7 @@ const ToDoList = ({
           } else if (displayStatus === "completed") {
             return todo.completed === true;
           } else {
-            return false; // should not be needed
+            return false;
           }
         })
         .filter((todo) => {
@@ -33,7 +33,6 @@ const ToDoList = ({
         })
         .filter((todo) => {
           if (searchText?.length > 0) {
-            //for (let i = 0; i < 300000000; i++) { }
             return todo.todoText
               .toLocaleLowerCase()
               .includes(searchText.toLocaleLowerCase());
