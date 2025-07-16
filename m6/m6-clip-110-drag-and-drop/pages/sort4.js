@@ -1,9 +1,9 @@
 import React, {
   createContext,
   useContext,
-  useState,
-  useRef,
   useLayoutEffect,
+  useRef,
+  useState,
 } from "react";
 
 // ---------------------------------------------
@@ -246,8 +246,8 @@ function ListItem({ item, index }) {
         marginBottom: `${itemGap}px`,
         ...(animationName
           ? {
-            animation: `${animationName} ${animationMs}ms ease-out forwards`,
-          }
+              animation: `${animationName} ${animationMs}ms ease-out forwards`,
+            }
           : {}),
       }}
       onMouseEnter={(e) => {
@@ -286,7 +286,9 @@ function DragDropListContent() {
       <div className="mt-4 text-muted small">
         Drag any item to reorder the list
         {isPending && (
-          <span className="ms-2 fw-semibold">(Updating in {animationMs / 1000} seconds...)</span>
+          <span className="ms-2 fw-semibold">
+            (Updating in {animationMs / 1000} seconds...)
+          </span>
         )}
       </div>
     </div>

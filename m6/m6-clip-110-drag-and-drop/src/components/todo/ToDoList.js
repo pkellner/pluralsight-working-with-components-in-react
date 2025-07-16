@@ -2,9 +2,8 @@ import ToDo from "./ToDo";
 import DragDropContextProvider, {
   DragDropToDoList,
 } from "../../contexts/DragDropContextProvider";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ToDosDataContext } from "../../contexts/ToDosDataContext";
-
 
 const ToDoList = ({
   displayStatus,

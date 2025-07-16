@@ -65,17 +65,30 @@ const ToDoManager = ({
   return (
     <>
       <div className="form">
-        <ToDoAddForm visible={addOrEdit === "add"} add={add} darkTheme={darkTheme}/>
+        <ToDoAddForm
+          visible={addOrEdit === "add"}
+          add={add}
+          darkTheme={darkTheme}
+        />
         <ToDoEditForm
-          visible={addOrEdit === "edit"} update={handleUpdate} todoRecord={todoRecord}
-          setTodoRecord={setTodoRecord} setAddOrEdit={setAddOrEdit}
+          visible={addOrEdit === "edit"}
+          update={handleUpdate}
+          todoRecord={todoRecord}
+          setTodoRecord={setTodoRecord}
+          setAddOrEdit={setAddOrEdit}
         />
       </div>
 
       <ToDoList
-        displayStatus={displayStatus} important={important} searchText={searchText}
-        toDoList={todoList} handleToggle={handleToggle} handleDelete={handleDelete}
-        handleEdit={handleEdit} idUpdating={idUpdating} darkTheme={darkTheme}
+        displayStatus={displayStatus}
+        important={important}
+        searchText={searchText}
+        toDoList={todoList}
+        handleToggle={handleToggle}
+        handleDelete={handleDelete}
+        handleEdit={handleEdit}
+        idUpdating={idUpdating}
+        darkTheme={darkTheme}
       />
     </>
   );

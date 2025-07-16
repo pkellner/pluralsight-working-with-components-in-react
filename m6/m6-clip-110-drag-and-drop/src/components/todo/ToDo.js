@@ -61,9 +61,7 @@ const Inner = ({
         </button>
       </div>
       {showSequenceNumberInRow && todoItem.sequence !== undefined && (
-        <span className="sequence-badge">
-          #{todoItem.sequence}
-        </span>
+        <span className="sequence-badge">#{todoItem.sequence}</span>
       )}
     </div>
   );

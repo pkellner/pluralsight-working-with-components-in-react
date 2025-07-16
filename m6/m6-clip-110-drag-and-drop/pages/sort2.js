@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useRef, useLayoutEffect } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 
 // Context
 const DragDropContext = createContext(undefined);
@@ -6,11 +12,11 @@ const DragDropContext = createContext(undefined);
 // Provider
 function DragDropProvider({ children }) {
   const [items, setItems] = useState([
-    { id: 1, text: 'Item 1' },
-    { id: 2, text: 'Item 2' },
-    { id: 3, text: 'Item 3' },
-    { id: 4, text: 'Item 4' },
-    { id: 5, text: 'Item 5' }
+    { id: 1, text: "Item 1" },
+    { id: 2, text: "Item 2" },
+    { id: 3, text: "Item 3" },
+    { id: 4, text: "Item 4" },
+    { id: 5, text: "Item 5" },
   ]);
 
   const [draggedItem, setDraggedItem] = useState(null);
@@ -19,12 +25,12 @@ function DragDropProvider({ children }) {
 
   function handleDragStart(e, item) {
     setDraggedItem(item);
-    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.effectAllowed = "move";
   }
 
   function handleDragOver(e) {
     e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
+    e.dataTransfer.dropEffect = "move";
   }
 
   function handleDragEnter(e, item) {
@@ -35,7 +41,7 @@ function DragDropProvider({ children }) {
   function handleDragLeave(e) {
     e.preventDefault();
     const target = e.target;
-    if (target.classList.contains('list-item')) {
+    if (target.classList.contains("list-item")) {
       setDraggedOverItem(null);
     }
   }
@@ -47,8 +53,8 @@ function DragDropProvider({ children }) {
       return;
     }
 
-    const draggedIndex = items.findIndex(item => item.id === draggedItem.id);
-    const dropIndex = items.findIndex(item => item.id === dropItem.id);
+    const draggedIndex = items.findIndex((item) => item.id === draggedItem.id);
+    const dropIndex = items.findIndex((item) => item.id === dropItem.id);
 
     const newItems = [...items];
     const [removed] = newItems.splice(draggedIndex, 1);
@@ -59,7 +65,7 @@ function DragDropProvider({ children }) {
       items: newItems,
       droppedId: draggedItem.id,
       dropTargetId: dropItem.id,
-      originalItems: items
+      originalItems: items,
     });
 
     // Execute reorder after 3 seconds
@@ -79,18 +85,20 @@ function DragDropProvider({ children }) {
   }
 
   return (
-    <DragDropContext.Provider value={{
-      items,
-      draggedItem,
-      draggedOverItem,
-      pendingReorder,
-      handleDragStart,
-      handleDragOver,
-      handleDragEnter,
-      handleDragLeave,
-      handleDrop,
-      handleDragEnd
-    }}>
+    <DragDropContext.Provider
+      value={{
+        items,
+        draggedItem,
+        draggedOverItem,
+        pendingReorder,
+        handleDragStart,
+        handleDragOver,
+        handleDragEnter,
+        handleDragLeave,
+        handleDrop,
+        handleDragEnd,
+      }}
+    >
       {children}
     </DragDropContext.Provider>
   );
@@ -100,7 +108,7 @@ function DragDropProvider({ children }) {
 function useDragDrop() {
   const context = useContext(DragDropContext);
   if (!context) {
-    throw new Error('useDragDrop must be used within a DragDropProvider');
+    throw new Error("useDragDrop must be used within a DragDropProvider");
   }
   return context;
 }
@@ -116,7 +124,7 @@ function ListItem({ item, index }) {
     handleDragEnter,
     handleDragLeave,
     handleDrop,
-    handleDragEnd
+    handleDragEnd,
   } = useDragDrop();
 
   const itemRef = useRef(null);
@@ -136,7 +144,9 @@ function ListItem({ item, index }) {
     }
 
     // Calculate position animation for all items that need to move
-    const previousIndex = pendingReorder.originalItems.findIndex(i => i.id === item.id);
+    const previousIndex = pendingReorder.originalItems.findIndex(
+      (i) => i.id === item.id,
+    );
     const currentIndex = index;
     const indexDiff = previousIndex - currentIndex;
 
@@ -159,7 +169,7 @@ function ListItem({ item, index }) {
         }
       `;
 
-      const styleElement = document.createElement('style');
+      const styleElement = document.createElement("style");
       styleElement.textContent = keyframes;
       document.head.appendChild(styleElement);
 
@@ -190,17 +200,19 @@ function ListItem({ item, index }) {
 
   // Build class names
   const classNames = [
-    'list-item',
-    'p-3',
-    'bg-white',
-    'border',
-    'border-2',
-    'rounded',
-    'list-group-item',
-    isDragging ? 'opacity-50' : '',
-    isDraggedOver ? 'border-primary bg-primary bg-opacity-10' : '',
-    isPending && !isDroppedItem && !isDropTarget ? 'opacity-75' : ''
-  ].filter(Boolean).join(' ');
+    "list-item",
+    "p-3",
+    "bg-white",
+    "border",
+    "border-2",
+    "rounded",
+    "list-group-item",
+    isDragging ? "opacity-50" : "",
+    isDraggedOver ? "border-primary bg-primary bg-opacity-10" : "",
+    isPending && !isDroppedItem && !isDropTarget ? "opacity-75" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <li
@@ -213,21 +225,23 @@ function ListItem({ item, index }) {
       onDrop={(e) => handleDrop(e, item)}
       onDragEnd={handleDragEnd}
       style={{
-        cursor: 'move',
-        position: 'relative',
+        cursor: "move",
+        position: "relative",
         zIndex: zIndex,
-        transition: 'box-shadow 0.2s',
-        ...(animationName ? {
-          animation: `${animationName} 3s ease-in-out forwards`
-        } : {})
+        transition: "box-shadow 0.2s",
+        ...(animationName
+          ? {
+              animation: `${animationName} 3s ease-in-out forwards`,
+            }
+          : {}),
       }}
       onMouseEnter={(e) => {
         if (!isDragging && !isPending) {
-          e.currentTarget.classList.add('shadow-sm');
+          e.currentTarget.classList.add("shadow-sm");
         }
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.classList.remove('shadow-sm');
+        e.currentTarget.classList.remove("shadow-sm");
       }}
       className={classNames}
     >
@@ -245,9 +259,9 @@ function DragDropListContent() {
   const displayItems = pendingReorder ? pendingReorder.items : items;
 
   return (
-    <div className="p-4" style={{ maxWidth: '28rem', margin: '0 auto' }}>
+    <div className="p-4" style={{ maxWidth: "28rem", margin: "0 auto" }}>
       <h2 className="h3 fw-bold mb-4">Drag and Drop List</h2>
-      <ul className={`list-unstyled ${isPending ? 'pe-none' : ''}`}>
+      <ul className={`list-unstyled ${isPending ? "pe-none" : ""}`}>
         {displayItems.map((item, index) => (
           <li key={item.id} className="mb-2">
             <ListItem item={item} index={index} />
@@ -256,7 +270,9 @@ function DragDropListContent() {
       </ul>
       <div className="mt-4 text-muted small">
         Drag any item to reorder the list
-        {isPending && <span className="ms-2 fw-semibold">(Updating in 3 seconds...)</span>}
+        {isPending && (
+          <span className="ms-2 fw-semibold">(Updating in 3 seconds...)</span>
+        )}
       </div>
     </div>
   );
@@ -272,9 +288,9 @@ export default function DragDropList() {
   React.useEffect(() => {
     // Inject Bootstrap CSS if not already present
     if (!document.querySelector('link[href*="bootstrap"]')) {
-      const styleContainer = document.createElement('div');
+      const styleContainer = document.createElement("div");
       styleContainer.innerHTML = bootstrapStyles;
-      const link = styleContainer.querySelector('link');
+      const link = styleContainer.querySelector("link");
       if (link) {
         document.head.appendChild(link);
       }

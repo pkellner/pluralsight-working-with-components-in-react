@@ -7,7 +7,13 @@ const useTodosData = () => {
   };
 
   const {
-    data, error, loadingStatus, createRecord, updateRecord, deleteRecord, reFetch,
+    data,
+    error,
+    loadingStatus,
+    createRecord,
+    updateRecord,
+    deleteRecord,
+    reFetch,
   } = useGeneralizedCrudMethods(url, errorNotificationFn);
 
   function createTodo(rec, callbackDone) {
@@ -23,7 +29,13 @@ const useTodosData = () => {
   }
 
   return {
-    todoList: data, loadingStatus, error, createTodo, updateTodo, deleteTodo, reFetch,
+    todoList: data,
+    loadingStatus,
+    error,
+    createTodo,
+    updateTodo,
+    deleteTodo,
+    reFetch,
   };
 };
 

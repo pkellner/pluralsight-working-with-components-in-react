@@ -1,4 +1,4 @@
-import { useState, useDebugValue } from "react";
+import { useDebugValue, useState } from "react";
 
 export default function useTheme() {
   const [darkTheme, setDarkTheme] = useState(false);

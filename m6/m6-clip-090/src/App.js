@@ -1,4 +1,4 @@
-import { useTransition, useState } from "react";
+import { useState, useTransition } from "react";
 import ToDoListWithToolbar from "./components/todo/ToDoListWithToolbar";
 import { TodosDataProvider } from "./contexts/ToDosDataContext";
 import ToDoManager from "./components/todo/ToDoManager";
@@ -15,14 +15,18 @@ const App = () => {
     <TodosDataProvider>
       <Layout>
         <ToDoListWithToolbar
-          displayStatus={displayStatus} setDisplayStatus={setDisplayStatus}
-          important={important} setImportant={setImportant}
+          displayStatus={displayStatus}
+          setDisplayStatus={setDisplayStatus}
+          important={important}
+          setImportant={setImportant}
           searchText={searchText}
           setSearchText={setSearchText}
-          startTransition={startTransition} isPending={isPending}
+          startTransition={startTransition}
+          isPending={isPending}
         >
           <ToDoManager
-            displayStatus={displayStatus} important={important}
+            displayStatus={displayStatus}
+            important={important}
             searchText={searchText}
           />
         </ToDoListWithToolbar>

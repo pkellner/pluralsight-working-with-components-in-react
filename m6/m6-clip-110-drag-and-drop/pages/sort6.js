@@ -1,10 +1,10 @@
-
-
 // ---------------------------------------------
 // Main Component with Provider
 // ---------------------------------------------
 import { useState } from "react";
-import DragDropContextProvider, { DragDropListContent } from "../src/contexts/DragDropContextProvider";
+import DragDropContextProvider, {
+  DragDropListContent,
+} from "../src/contexts/DragDropContextProvider";
 
 export default function DragDropList() {
   const [items, setItems] = useState([

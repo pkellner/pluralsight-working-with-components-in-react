@@ -11,11 +11,23 @@ export const ToDosDataContext = createContext({
 
 export const TodosDataProvider = ({ children }) => {
   const {
-    todoList, createTodo, updateTodo, deleteTodo, loadingStatus, isPending, reFetch,
+    todoList,
+    createTodo,
+    updateTodo,
+    deleteTodo,
+    loadingStatus,
+    isPending,
+    reFetch,
   } = useTodosData();
 
   const value = {
-    todoList, createTodo, updateTodo, deleteTodo, loadingStatus, isPending, reFetch,
+    todoList,
+    createTodo,
+    updateTodo,
+    deleteTodo,
+    loadingStatus,
+    isPending,
+    reFetch,
   };
 
   return (

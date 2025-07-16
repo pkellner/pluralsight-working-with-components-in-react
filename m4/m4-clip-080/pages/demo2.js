@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 const EnhancedComponent = ({ darkTheme, toggleTheme }) => {
   // const [darkTheme, setDarkTheme] = useState(true);
   return (

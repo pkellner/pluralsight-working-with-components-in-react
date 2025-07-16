@@ -21,7 +21,8 @@ const Inner = ({
           return handleToggleCompleted(todoItem.id);
         }}
       >
-        <ToDoItemText className="todo-text"
+        <ToDoItemText
+          className="todo-text"
           important={todoItem.important}
           todoText={todoItem.todoText}
         />

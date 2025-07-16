@@ -14,13 +14,18 @@ const App = () => {
     <TodosDataProvider>
       <Layout toggleTheme={toggleTheme} darkTheme={darkTheme}>
         <ToDoListWithToolbar
-          displayStatus={displayStatus} setDisplayStatus={setDisplayStatus}
-          import={important} setImportant={setImportant}
-          searchText={searchText} setSearchText={setSearchText}
+          displayStatus={displayStatus}
+          setDisplayStatus={setDisplayStatus}
+          import={important}
+          setImportant={setImportant}
+          searchText={searchText}
+          setSearchText={setSearchText}
         >
           <ToDoManager
-            displayStatus={displayStatus} important={important}
-            searchText={searchText} darkTheme={darkTheme}
+            displayStatus={displayStatus}
+            important={important}
+            searchText={searchText}
+            darkTheme={darkTheme}
           />
         </ToDoListWithToolbar>
       </Layout>
