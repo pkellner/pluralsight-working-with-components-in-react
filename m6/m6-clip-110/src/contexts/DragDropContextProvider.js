@@ -557,33 +557,3 @@ function ListItem({ item, index }) {
     </li>
   );
 }
-
-// ---------------------------------------------
-// Main List Component
-// ---------------------------------------------
-export function DragDropListContent({ items }) {
-  const { pendingReorder } = useDragDrop();
-  const isPending = pendingReorder !== null;
-
-  // Use pending items for display order if available, otherwise use actual items
-  const displayItems = pendingReorder ? pendingReorder.items : items;
-
-  return (
-    <div className="p-4" style={{ maxWidth: "28rem", margin: "0 auto" }}>
-      <h2 className="h3 fw-bold mb-4">Drag and Drop List</h2>
-      <ul className={`list-unstyled ${isPending ? "pe-none" : ""}`}>
-        {displayItems.map((item, index) => (
-          <ListItem key={item.id} item={item} index={index} />
-        ))}
-      </ul>
-      <div className="mt-4 text-muted small">
-        Drag any item to reorder the list
-        {isPending && (
-          <span className="ms-2 fw-semibold">
-            (Updating in {animationMs / 1000} seconds...)
-          </span>
-        )}
-      </div>
-    </div>
-  );
-}
