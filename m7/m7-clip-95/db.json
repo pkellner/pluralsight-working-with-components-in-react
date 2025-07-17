@@ -26,7 +26,7 @@
       "todoText": "Vacuum living room",
       "completed": true,
       "important": false,
-      "sequence": 3
+      "sequence": 1
     },
     {
       "id": 5,
@@ -40,7 +40,7 @@
       "todoText": "Buy light for desk",
       "completed": false,
       "important": false,
-      "sequence": 4
+      "sequence": 2
     },
     {
       "id": 8,
