@@ -1,5 +1,5 @@
-# Working with Components in React 18
+# Working with Components in React
 
-For use with the course "Working with Components in React 18" at Pluralsight
+For use with the course "Working with Components in React" at PluralsightReact
 
 Author: Peter Kellner
