@@ -8,9 +8,10 @@ This document describes the actual implementation of the server/client component
 
 Due to Next.js constraints where server components cannot be imported by client components, we made the following adjustments:
 
-- **ThemedAppShell** is now a client component that renders the entire app shell
-- Static content (header, footer structure) is rendered within this client component
-- Client islands (HeaderActions, TodoStats, FooterActions) are embedded directly
+- **ThemedAppShell** is a client component that renders the app shell with theme support
+- The main page structure is composed in the server component `page.jsx`
+- Client components (HeaderActions, TodoStats, FooterActions) handle all interactive elements
+- TodoStateManager centralizes all todo-related state management and UI composition
 
 ### 2. Component Structure
 
@@ -18,7 +19,7 @@ Due to Next.js constraints where server components cannot be imported by client 
 src/
 ├── app/
 │   ├── layout.js (Server Component - sets up HTML structure)
-│   └── page.jsx (Server Component - renders todo section)
+│   └── page.jsx (Server Component - renders page structure)
 │
 ├── components/
 │   ├── layout/
@@ -33,22 +34,17 @@ src/
 │   │   └── TodoDataProvider.js (Todo data provider)
 │   │
 │   └── todo/
-│       ├── server/
-│       │   ├── TodoSection.js
-│       │   ├── TodoToolbar.js
-│       │   ├── TodoFilters.js
-│       │   ├── TodoSearch.js
-│       │   ├── TodoListContainer.js
-│       │   └── TodoInput.js
-│       │
 │       └── client/
-│           ├── FilterButtons.js
-│           ├── SearchInput.js
-│           ├── TodoList.js
-│           ├── TodoItem.js
-│           ├── DragDropWrapper.js
-│           └── AddTodoForm.js
+│           ├── TodoStateManager.js (Central state management)
+│           ├── FilterButtons.js (Filter nav links)
+│           ├── SearchInput.js (Search input)
+│           ├── TodoList.js (Todo list with filtering)
+│           ├── TodoItem.js (Individual todo item)
+│           ├── DragDropWrapper.js (Drag and drop functionality)
+│           └── AddTodoForm.js (Add todo form)
 ```
+
+Note: The server components in `todo/server/` were removed during implementation as they added unnecessary wrapper divs that broke the CSS layout. The structure is now simpler with server components only at the app level.
 
 ### 3. Data Flow
 
@@ -82,8 +78,8 @@ src/
 ### 6. Trade-offs
 
 1. **ThemedAppShell as Client Component**: Since the theme affects the entire shell, we made it a client component
-2. **Duplicate Structure**: Some HTML structure is in the client component rather than server components
-3. **Multiple Providers**: TodoDataProvider is instantiated twice (main section and footer)
+2. **Simplified Structure**: Server components for todo section were removed to maintain CSS layout integrity
+3. **Multiple Providers**: TodoDataProvider is instantiated twice (main section and footer) for proper scoping
 
 ## Running the Application
 
