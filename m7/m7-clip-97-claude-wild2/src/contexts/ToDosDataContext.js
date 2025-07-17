@@ -1,6 +1,5 @@
 
 
-'use client';
 import React, { createContext } from "react";
 import useTodosData from "../hooks/useTodosData";
 

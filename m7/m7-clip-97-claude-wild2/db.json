@@ -1,44 +1,30 @@
 {
   "todos": [
     {
-      "todoText": "asdfsdafasd",
-      "completed": false,
-      "important": false,
-      "id": 13,
-      "sequence": 10
-    },
-    {
-      "todoText": "asdf",
-      "completed": false,
-      "important": false,
-      "id": 12,
-      "sequence": 9
-    },
-    {
       "todoText": "Take practice exam",
       "completed": false,
       "important": false,
       "id": 11,
-      "sequence": 2
+      "sequence": 8
     },
     {
       "id": 1,
       "todoText": "Give dog a bath",
       "completed": false,
       "important": false,
-      "sequence": 3
+      "sequence": 1
     },
     {
       "id": 2,
       "todoText": "Do laundry",
-      "completed": true,
+      "completed": false,
       "important": false,
       "sequence": 0
     },
     {
       "id": 4,
       "todoText": "Vacuum living room",
-      "completed": false,
+      "completed": true,
       "important": false,
       "sequence": 3
     },
@@ -52,30 +38,30 @@
     {
       "id": 6,
       "todoText": "Buy light for desk",
-      "completed": true,
+      "completed": false,
       "important": false,
-      "sequence": 4
+      "sequence": 6
     },
     {
       "id": 8,
       "todoText": "Hang laundry",
       "completed": false,
       "important": false,
-      "sequence": 8
+      "sequence": 7
     },
     {
       "id": 9,
       "todoText": "Do expense report",
-      "completed": true,
+      "completed": false,
       "important": false,
-      "sequence": 5
+      "sequence": 6
     },
     {
       "id": 10,
       "todoText": "Walk the dog",
       "completed": false,
       "important": true,
-      "sequence": 7
+      "sequence": 6
     }
   ]
 }
