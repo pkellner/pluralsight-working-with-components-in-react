@@ -20,7 +20,7 @@ import TodoList from './TodoList';
 import AddTodoForm from './AddTodoForm';
 import TodoDataProvider from '../../providers/TodoDataProvider';
 
-export default function TodoStateManager() {
+export default function TodoStateManager({ preRenderedTextElements }) {
   // State for filtering and searching todos
   const [displayStatus, setDisplayStatus] = useState("all"); // all, pending, completed
   const [important, setImportant] = useState(false);
@@ -78,6 +78,7 @@ export default function TodoStateManager() {
             displayStatus={displayStatus}
             important={important}
             searchText={searchText}
+            preRenderedTextElements={preRenderedTextElements}
           />
         </div>
       </TodoDataProvider>

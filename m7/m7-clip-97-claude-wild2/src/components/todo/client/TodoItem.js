@@ -11,15 +11,21 @@
  * 
  * This component handles all interactions for a single todo item
  * including completion toggle, editing, and deletion.
+ * 
+ * NOTE: This component receives a `textElement` prop that contains a
+ * server-rendered React element. When provided, this element was rendered
+ * on the server by TodoTextRenderer, demonstrating true server component usage.
+ * The server component processes text (sanitization, truncation) on the server
+ * and passes the rendered JSX to this client component as a prop.
  */
 
 import { useContext, useState, memo } from 'react';
 import { ToDosDataContext } from '../../../contexts/ToDosDataContext';
 import ToDoEditForm from '../../todo/ToDoEditForm';
-import ToDoItemText from '../../todo/ToDoItemText';
 import ErrorBoundary from '../../common/ErrorBoundary';
+import TodoTextDisplay from '../shared/TodoTextDisplay';
 
-function TodoItemInner({ todoItem }) {
+function TodoItemInner({ todoItem, textElement }) {
   // Access todo methods from context
   const { updateTodo, deleteTodo } = useContext(ToDosDataContext);
   
@@ -73,11 +79,12 @@ function TodoItemInner({ todoItem }) {
               return handleCheckboxChange();
             }}
           >
-            <ToDoItemText
-              className="todo-text"
-              important={todoItem.important}
-              todoText={todoItem.todoText}
-            />
+            {textElement || (
+              <TodoTextDisplay 
+                text={todoItem.todoText?.slice(0, 60)} 
+                important={todoItem.important}
+              />
+            )}
           </div>
 
           <div className="task-actions">

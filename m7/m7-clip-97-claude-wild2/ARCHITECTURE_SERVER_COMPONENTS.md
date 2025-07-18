@@ -19,7 +19,7 @@ Due to Next.js constraints where server components cannot be imported by client 
 src/
 ├── app/
 │   ├── layout.js (Server Component - sets up HTML structure)
-│   └── page.jsx (Server Component - renders page structure)
+│   └── page.jsx (Server Component - renders page, pre-renders todo text)
 │
 ├── components/
 │   ├── layout/
@@ -34,17 +34,26 @@ src/
 │   │   └── TodoDataProvider.js (Todo data provider)
 │   │
 │   └── todo/
+│       ├── server/
+│       │   └── TodoTextRenderer.js (TRUE server component - text processing)
+│       ├── shared/
+│       │   └── TodoTextDisplay.js (Shared component - text UI rendering)
 │       └── client/
-│           ├── TodoStateManager.js (Central state management)
+│           ├── TodoStateManager.js (Central state management - receives preRenderedTextElements)
 │           ├── FilterButtons.js (Filter nav links)
 │           ├── SearchInput.js (Search input)
-│           ├── TodoList.js (Todo list with filtering)
-│           ├── TodoItem.js (Individual todo item)
-│           ├── DragDropWrapper.js (Drag and drop functionality)
+│           ├── TodoList.js (Todo list - passes preRenderedTextElements)
+│           ├── TodoItem.js (Todo item - uses textElement prop)
+│           ├── DragDropWrapper.js (Drag and drop - passes preRenderedTextElements)
 │           └── AddTodoForm.js (Add todo form)
 ```
 
-Note: The server components in `todo/server/` were removed during implementation as they added unnecessary wrapper divs that broke the CSS layout. The structure is now simpler with server components only at the app level.
+**Key Implementation Notes:**
+- `page.jsx` reads todos from `db.json` and pre-renders all text using `TodoTextRenderer`
+- Pre-rendered elements are passed down as `preRenderedTextElements` prop
+- Client components receive and display server-rendered React elements
+- TodoTextRenderer is a TRUE server component - only imported in page.jsx
+- TodoTextDisplay is a shared component used by both server and client components for consistent rendering
 
 ### 3. Data Flow
 
@@ -81,6 +90,45 @@ Note: The server components in `todo/server/` were removed during implementation
 2. **Simplified Structure**: Server components for todo section were removed to maintain CSS layout integrity
 3. **Multiple Providers**: TodoDataProvider is instantiated twice (main section and footer) for proper scoping
 
+## Server Components at Item Level
+
+### TodoTextRenderer Implementation
+
+We've successfully implemented `TodoTextRenderer` as a true server component that demonstrates server-side text processing at the todo item level. This implementation shows the correct pattern for using server components with interactive client components.
+
+**How it works:**
+1. `page.jsx` (server component) reads todos from `db.json` at build time
+2. TodoTextRenderer processes each todo's text on the server (sanitization, truncation)
+3. TodoTextRenderer uses the shared TodoTextDisplay component for rendering
+4. Pre-rendered React elements are passed as props through the component tree
+5. TodoItem (client component) receives and displays the server-rendered text
+6. TodoItem falls back to using TodoTextDisplay for client-side rendering when needed
+
+**Benefits achieved:**
+- Security: HTML escaping happens on the server
+- Performance: No text processing JavaScript sent to client
+- Zero client-side overhead for text rendering
+- Consistent UI between server and client rendering
+- No code duplication through shared component pattern
+- Could easily add markdown/rich text without increasing bundle size
+
+**Implementation pattern:**
+```jsx
+// Server component renders text elements
+const todoTextElements = {};
+todos.forEach(todo => {
+  todoTextElements[todo.id] = <TodoTextRenderer {...todo} />;
+});
+
+// Pass to client components as props
+<TodoStateManager preRenderedTextElements={todoTextElements} />
+```
+
+**Shared Component Pattern:**
+The TodoTextDisplay component in `src/components/todo/shared/` can be imported by both server and client components, ensuring consistent rendering without code duplication.
+
+See `SERVER_COMPONENTS_TODOITEM_EXPLANATION.md` for detailed analysis.
+
 ## Running the Application
 
 ```bash
@@ -92,3 +140,4 @@ The application demonstrates:
 - Client-side theme switching
 - Interactive todo management
 - Minimal client-side JavaScript where possible
+- Example of server component for text processing (TodoTextRenderer)

@@ -19,7 +19,7 @@ import DragDropWrapper from './DragDropWrapper';
 import TodoItem from './TodoItem';
 import ErrorBoundary from '../../common/ErrorBoundary';
 
-export default function TodoList({ displayStatus, important, searchText }) {
+export default function TodoList({ displayStatus, important, searchText, preRenderedTextElements }) {
   // Access todo data from context
   const { todoList, loadingStatus } = useContext(ToDosDataContext);
 
@@ -81,7 +81,7 @@ export default function TodoList({ displayStatus, important, searchText }) {
   return (
     <div className="tasks">
       <ErrorBoundary>
-        <DragDropWrapper items={filteredTodos} fullList={todoList}>
+        <DragDropWrapper items={filteredTodos} fullList={todoList} preRenderedTextElements={preRenderedTextElements}>
           <TodoItem />
         </DragDropWrapper>
       </ErrorBoundary>

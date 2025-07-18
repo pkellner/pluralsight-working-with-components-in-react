@@ -18,9 +18,28 @@ import TodoDataProvider from '../components/providers/TodoDataProvider';
 import TodoStats from '../components/layout/client/TodoStats';
 import FooterActions from '../components/layout/client/FooterActions';
 import TodoStateManager from '../components/todo/client/TodoStateManager';
+import TodoTextRenderer from '../components/todo/server/TodoTextRenderer';
+import { readFileSync } from 'fs';
+import path from 'path';
 
 export default function HomePage() {
   const layoutVersion = "Layout Version 2.0";
+  
+  // Read todos from db.json at build time (server-side)
+  const dbPath = path.join(process.cwd(), 'db.json');
+  const dbData = JSON.parse(readFileSync(dbPath, 'utf8'));
+  const todos = dbData.todos || [];
+  
+  // Pre-render all todo text elements on the server
+  const todoTextElements = {};
+  todos.forEach(todo => {
+    todoTextElements[todo.id] = (
+      <TodoTextRenderer 
+        todoText={todo.todoText}
+        important={todo.important}
+      />
+    );
+  });
 
   return (
     <ThemedAppShell>
@@ -32,7 +51,7 @@ export default function HomePage() {
       </header>
 
       {/* Todo section with state management */}
-      <TodoStateManager />
+      <TodoStateManager preRenderedTextElements={todoTextElements} />
 
       {/* Static footer structure - server component content */}
       <footer className="text-center">

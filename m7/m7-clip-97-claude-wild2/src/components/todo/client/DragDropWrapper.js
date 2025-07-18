@@ -17,7 +17,7 @@ import { useContext } from 'react';
 import { ToDosDataContext } from '../../../contexts/ToDosDataContext';
 import DragDropContextProvider, { DragDropToDoList } from '../../../contexts/DragDropContextProvider';
 
-export default function DragDropWrapper({ items, fullList, children }) {
+export default function DragDropWrapper({ items, fullList, children, preRenderedTextElements }) {
   // Access updateTodo method from context
   const { updateTodo } = useContext(ToDosDataContext);
 
@@ -40,7 +40,7 @@ export default function DragDropWrapper({ items, fullList, children }) {
       onItemsChange={handleItemsChange}
       fullList={fullList}
     >
-      <DragDropToDoList>
+      <DragDropToDoList preRenderedTextElements={preRenderedTextElements}>
         {children}
       </DragDropToDoList>
     </DragDropContextProvider>

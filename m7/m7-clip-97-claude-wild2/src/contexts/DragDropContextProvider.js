@@ -353,7 +353,7 @@ export function DraggableToDo({ todo, index, children }) {
 // ---------------------------------------------
 // DragDropToDoList Component - Renders draggable todo items
 // ---------------------------------------------
-export function DragDropToDoList({ children }) {
+export function DragDropToDoList({ children, preRenderedTextElements }) {
   const { pendingReorder, items } = useDragDrop();
   const displayTodos = pendingReorder ? pendingReorder.items : items;
 
@@ -364,6 +364,7 @@ export function DragDropToDoList({ children }) {
           {React.Children.map(children, (child) =>
             React.cloneElement(child, {
               todoItem: { ...todo, sequence: index + 1 },
+              textElement: preRenderedTextElements?.[todo.id],
             }),
           )}
         </DraggableToDo>
