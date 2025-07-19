@@ -1,6 +1,7 @@
 import React, {
   createContext,
   useContext,
+  useEffect,
   useLayoutEffect,
   useRef,
   useState,
@@ -31,6 +32,10 @@ export default function DragDropContextProvider({
   const [pendingReorder, setPendingReorder] = useState(null);
   const [dropPosition, setDropPosition] = useState(null);
   const [dragOffset, setDragOffset] = useState(null);
+  
+  // Refs to track timeouts for cleanup
+  const dropTimeoutRef = useRef(null);
+  const dragEndTimeoutRef = useRef(null);
 
   function handleDragStart(e, item) {
     setDraggedItem(item);
@@ -120,12 +125,18 @@ export default function DragDropContextProvider({
       dragOffset: dragOffset,
     });
 
+    // Clear any existing timeout
+    if (dropTimeoutRef.current) {
+      clearTimeout(dropTimeoutRef.current);
+    }
+    
     // Execute reorder after the unified animation duration
-    setTimeout(() => {
+    dropTimeoutRef.current = setTimeout(() => {
       onItemsChange(updatedFullList || newItems);
       setPendingReorder(null);
       setDropPosition(null);
       setDragOffset(null);
+      dropTimeoutRef.current = null;
     }, animationMs);
 
     setDraggedItem(null);
@@ -142,12 +153,18 @@ export default function DragDropContextProvider({
       const endY = e.clientY;
       setDropPosition({ x: endX, y: endY });
 
+      // Clear any existing timeout
+      if (dragEndTimeoutRef.current) {
+        clearTimeout(dragEndTimeoutRef.current);
+      }
+      
       // Clear states after a short delay
-      setTimeout(() => {
+      dragEndTimeoutRef.current = setTimeout(() => {
         setDraggedItem(null);
         setDraggedOverItem(null);
         setDropPosition(null);
         setDragOffset(null);
+        dragEndTimeoutRef.current = null;
       }, 100);
     } else {
       setDraggedItem(null);
@@ -155,6 +172,18 @@ export default function DragDropContextProvider({
       setDragOffset(null);
     }
   }
+  
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (dropTimeoutRef.current) {
+        clearTimeout(dropTimeoutRef.current);
+      }
+      if (dragEndTimeoutRef.current) {
+        clearTimeout(dragEndTimeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <DragDropContext.Provider
@@ -254,12 +283,19 @@ export function DraggableToDo({ todo, index, children }) {
 
       setDroppedItemAnimation(uniqueAnimationName);
 
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         setDroppedItemAnimation(null);
-        document.head.removeChild(styleElement);
+        if (document.head.contains(styleElement)) {
+          document.head.removeChild(styleElement);
+        }
       }, animationMs);
 
-      return;
+      return () => {
+        clearTimeout(timeoutId);
+        if (document.head.contains(styleElement)) {
+          document.head.removeChild(styleElement);
+        }
+      };
     }
 
     // Calculate position animation for all other items that need to move
@@ -293,10 +329,19 @@ export function DraggableToDo({ todo, index, children }) {
 
       setAnimationName(uniqueAnimationName);
 
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         setAnimationName(null);
-        document.head.removeChild(styleElement);
+        if (document.head.contains(styleElement)) {
+          document.head.removeChild(styleElement);
+        }
       }, animationMs);
+      
+      return () => {
+        clearTimeout(timeoutId);
+        if (document.head.contains(styleElement)) {
+          document.head.removeChild(styleElement);
+        }
+      };
     }
   }, [pendingReorder, todo.id, index]);
 

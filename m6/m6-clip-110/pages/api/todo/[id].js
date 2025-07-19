@@ -72,7 +72,9 @@ export default async function userHandler(req, res) {
       try {
         await delay(delayTime);
         const todos = await getTodosData();
-        const updated = todos.map((rec) => (rec.id === id ? recordFromBody : rec));
+        const updated = todos.map((rec) =>
+          rec.id === id ? recordFromBody : rec,
+        );
         await saveTodos(updated);
         res.status(200).json(recordFromBody);
         console.log(`PUT /api/todo/${id} status: 200`);
